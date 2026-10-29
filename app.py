@@ -18,6 +18,8 @@ def list_applications():
 @app.route("/applications", methods=["POST"])
 def add_application():
     data = request.get_json()
+    if not data or not data.get("company") or not data.get("role"):
+        return jsonify({"error": "company and role are required"}), 400
     conn = get_connection()
     cursor = conn.execute(
         "INSERT INTO applications (company, role, date_applied, status) VALUES (?, ?, ?, ?)",
@@ -31,6 +33,8 @@ def add_application():
 @app.route("/applications/<int:app_id>", methods=["PUT"])
 def update_application(app_id):
     data = request.get_json()
+    if not data or not data.get("status"):
+        return jsonify({"error": "status is required"}), 400
     conn = get_connection()
     conn.execute(
         "UPDATE applications SET status = ? WHERE id = ?",
